@@ -1,20 +1,20 @@
 <?php
 //var_dump($_POST);
-//�ŏ��ɕϐ����`���Ă����Ȃ��ƃG���[�ɂȂ�
+//最初に変数を定義しておかないとエラーになる
 $err_msg1 = "";
 $err_msg2 = "";
 $err_msg3 = "";
 $err_msg4 = "";
 $message ="";
-//isset�͕ϐ����Z�b�g����Ă��邩�m�F�A�l�������TRUE��Ԃ�
-$day = ( isset( $_POST["day"]) === true ) ?$_POST["day"]: ""; //�g�p����
-$koumoku = ( isset( $_POST["koumoku"]) === true ) ?$_POST["koumoku"]: "";�@//����
-$kingaku = ( isset( $_POST["kingaku"]) === true ) ?$_POST["kingaku"]: "";�@//���z
-$naiyo = ( isset( $_POST["naiyo"] === true )? trim($_POST["naiyo"]) : "";�@//���e
+//issetは変数がセットされているか確認、値があればTRUEを返す
+$day = ( isset( $_POST["day"]) === true ) ?$_POST["day"]: ""; //使用日時
+$koumoku = ( isset( $_POST["koumoku"]) === true ) ?$_POST["koumoku"]: "";　//項目
+$kingaku = ( isset( $_POST["kingaku"]) === true ) ?$_POST["kingaku"]: "";　//金額
+$naiyo = ( isset( $_POST["naiyo"] === true )? trim($_POST["naiyo"]) : "";　//内容
 
-//���ڂ��󔒂ł���΃G���[���b�Z�[�W
+//項目が空白であればエラーメッセージ
 if ( isset($_POST["send"]) === true ){
-        if ( $name === "") $err_msg1 = "Plese insert your day";
+        if ( $day === "") $err_msg1 = "Plese insert your day";
 
         if ( $koumoku === "")) $err_msg2 = "Plese insert koumoku";
         
@@ -23,19 +23,19 @@ if ( isset($_POST["send"]) === true ){
         if ( $naiyo === "")) $err_msg4 = "Plese insert naiyo";
 
         if ( $err_msg1 === "" && $err_msg2 === "" && $err_msg3 === "" && $err_msg4 === "" ){
-                $fp = fopen ( "data.txt" ,"a" ); //fopen��data.txt���t�@�C�����Amode��a�ŏ����o���p�݂̂ŊJ��
-                fwrite( $fp , $day."\t", $koumoku."\t", $kingaku."\t".$naiyo."\n");�@//���͓��e���������݁At�Ń^�u�An�ŉ��s
+                $fp = fopen ( "data.txt" ,"a" ); //fopenでdata.txtをファイルを、modeはaで書き出し用のみで開く
+                fwrite( $fp , $day."\t", $koumoku."\t", $kingaku."\t".$naiyo."\n");　//入力内容を書き込み、tでタブ、nで改行
                 $message = "Success!";
         }
 }
 
 
-/* �e�L�X�g�t�@�C������̓ǂݍ��� */
+/* テキストファイルからの読み込み */
 
-$fp = fopen("data.txt","r");  //mode��r�œǂݍ���
+$fp = fopen("data.txt","r");  //modeはrで読み込み
 
-$dataArr = array();�@//�z��쐬
-//data.txt�ɓ����Ă�����e���t�@�C����1�s���o��
+$dataArr = array();　//配列作成
+//data.txtに入っている内容をファイルを1行ずつ出力
 while($res = fgets( $fp )){
         $tmp = explode("\t",$res);
         $arr = array(
@@ -48,7 +48,7 @@ while($res = fgets( $fp )){
 }
 ?>
 
-/*�@HTML�ւ̕\���@*/
+/*　HTMLへの表示　*/
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="ja">
         <head>
@@ -59,23 +59,23 @@ while($res = fgets( $fp )){
         		<?php echo "kakeibo2020"; ?>
                 <?php echo $message; ?>
                 <form method = "post" action = "">
-                //�g�p����
+                //使用日時
                 DAY : <input type = "text" name = "day" value="<?php echo $day; ?>">
                         <?php echo $err_msg1; ?><br>
-                //����
+                //項目
                 KOUMOKU : <input type = "text" name = "koumoku" value="<?php echo $koumoku; ?>">
                         <?php echo $err_msg2; ?><br>
-                //���z
+                //金額
                 KINGAKU : <input type = "text" name = "kingaku" value="<?php echo $kingaku; ?>">
                         <?php echo $err_msg3; ?><br>                
-                //���e
-                NAIYO : <textarea name = "naiyo" rows="4" cols="40"><?php echo $comment; ?></textarea>
+                //内容
+                NAIYO : <textarea name = "naiyo" rows="4" cols="40"><?php echo $naiyo; ?></textarea>
                 <?php echo $err_msg4; ?><br>
 <br>
                 <input type="submit" name= "send" value = "click">
                 </form>
         <dl>
-        //foreach�Ńf�[�^�����o���i$dataArr�ɓ����Ă���l��$data�ɑ���j
+        //foreachでデータを取り出す（$dataArrに入っている値を$dataに代入）
          <?php foreach( $dataArr as $data ): ?>
          <p><span><?php echo $data["day"]; ?></span>:<span><?php echo $data["koumoku"]; ?></span>:<span><?php echo $data["kingaku"]; ?></span>:<span><?php echo $data["naiyo"]; ?></span></p>
         <?php endforeach;?>
